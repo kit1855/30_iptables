@@ -239,20 +239,34 @@ Vagrant.configure("2") do |config|
     inet2.vm.provision "shell",
       run: "always",
       inline: <<-SHELL
-        sudo dnf install -y iptables-services
-        sudo systemctl enable iptables
-        sudo iptables-save | sudo tee /etc/sysconfig/iptables
+        #sudo dnf upgrade -y
+        sudo dnf install -y epel-release
+        sudo dnf install -y knock-server iptables-services
 
+        # Отключаем firewalld
+        sudo systemctl stop firewalld
+        sudo systemctl disable firewalld
+        sudo systemctl mask firewalld
+
+        #  включаем iptables в автозагрузку и запускаем его
+        sudo systemctl enable iptables
+        sudo systemctl start iptables
+
+        # включаем форвардинг
         sudo sysctl -w net.ipv4.ip_forward=1
         grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
 
-
-        sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
-        sudo iptables -A FORWARD -j ACCEPT
-        sudo iptables-save | sudo tee /etc/sysconfig/iptables
-        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
+        # Указываем маршрут до directors-net через centralRouter
+        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
         sudo nmcli con reload
         sudo nmcli con up 'System eth1'
+
+        # проброс порта
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
+        sudo iptables -A FORWARD -p tcp -d 192.168.0.2 --dport 80 -j ACCEPT
+
+        # сохранение правил iptables
+        sudo iptables-save | sudo tee /etc/sysconfig/iptables
       SHELL
   end
 
