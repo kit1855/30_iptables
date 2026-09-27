@@ -89,6 +89,10 @@ Vagrant.configure("2") do |config|
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+
+      sudo dnf install -y nginx.service
+
+
       nmcli con modify 'eth0' ipv4.never-default yes
       nmcli con reload
       nmcli con up 'eth0'
@@ -237,8 +241,12 @@ Vagrant.configure("2") do |config|
       inline: <<-SHELL
         sudo dnf install -y iptables-services
         sudo systemctl enable iptables
+        sudo iptables-save | sudo tee /etc/sysconfig/iptables
+
         sudo sysctl -w net.ipv4.ip_forward=1
         grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
+
+
         sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
         sudo iptables -A FORWARD -j ACCEPT
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
