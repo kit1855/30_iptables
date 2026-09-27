@@ -268,11 +268,12 @@ Vagrant.configure("2") do |config|
     end
 
     knocker.vm.network "private_network", ip: "192.168.59.10", adapter: 2, netmask: "255.255.255.0"
+    knocker.vm.network "private_network", ip: "192.168.58.12", adapter: 3, netmask: "255.255.255.0"
 
     knocker.vm.provision "shell",
       run: "once",
       inline: <<-SHELL
-        sudo dnf upgrade -y
+        #sudo dnf upgrade -y
         sudo dnf install -y epel-release
         sudo dnf install -y knock
       SHELL
