@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
     run: "always",
     inline: <<-SHELL
 
-      sudo dnf install -y nginx.service
+      sudo dnf install -y nginx
 
 
       nmcli con modify 'eth0' ipv4.never-default yes
@@ -225,16 +225,16 @@ Vagrant.configure("2") do |config|
   # ============================================
   # 8. inetRouter2 (AlmaLinux 9)
   # ============================================
-  config.vm.define "inetRouter" do |inet|
+  config.vm.define "inetRouter2" do |inet|
     inet.vm.box = "almalinux/9"
-    inet.vm.hostname = "inetRouter"
+    inet.vm.hostname = "inetRouter2"
     inet.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 2
     end
 
     inet.vm.network "private_network", ip: "192.168.255.1", adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"
-    inet.vm.network "private_network", ip: "192.168.51.10", adapter: 3, netmask: "255.255.255.0"
+    inet.vm.network "private_network", ip: "192.168.58.10", adapter: 3, netmask: "255.255.255.0"
 
     inet.vm.provision "shell",
       run: "always",
@@ -253,6 +253,27 @@ Vagrant.configure("2") do |config|
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
         sudo nmcli con reload
         sudo nmcli con up 'System eth1'
+      SHELL
+  end
+
+  # ============================================
+  # 9. knocker (AlmaLinux 9)
+  # ============================================
+  config.vm.define "knocker" do |inet|
+    inet.vm.box = "almalinux/9"
+    inet.vm.hostname = "knocker"
+    inet.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+    end
+
+    inet.vm.network "private_network", ip: "192.168.51.10", adapter: 2, netmask: "255.255.255.0"
+
+    inet.vm.provision "shell",
+      run: "once",
+      inline: <<-SHELL
+        sudo dnf upgrade -y
+        sudo dnf install -y knock
       SHELL
   end
 end
