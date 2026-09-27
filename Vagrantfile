@@ -37,37 +37,6 @@ Vagrant.configure("2") do |config|
   end
 
   # ============================================
-  # 1a. inetRouter2 (AlmaLinux 9)
-  # ============================================
-  config.vm.define "inetRouter" do |inet|
-    inet.vm.box = "almalinux/9"
-    inet.vm.hostname = "inetRouter"
-    inet.vm.provider "virtualbox" do |v|
-      v.memory = 2048
-      v.cpus = 2
-    end
-
-    inet.vm.network "private_network", ip: "192.168.255.1", adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"
-    inet.vm.network "private_network", ip: "192.168.51.10", adapter: 3, netmask: "255.255.255.0"
-
-    inet.vm.provision "shell",
-      run: "always",
-      inline: <<-SHELL
-        sudo dnf install -y iptables-services
-        sudo systemctl enable iptables
-        sudo sysctl -w net.ipv4.ip_forward=1
-        grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
-        sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
-        sudo iptables -A FORWARD -j ACCEPT
-        sudo iptables-save | sudo tee /etc/sysconfig/iptables
-        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
-        sudo nmcli con reload
-        sudo nmcli con up 'System eth1'
-      SHELL
-  end
-
-
-  # ============================================
   # 2. centralRouter
   # ============================================
   config.vm.define "centralRouter" do |central|
@@ -242,4 +211,33 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
+  # ============================================
+  # 8. inetRouter2 (AlmaLinux 9)
+  # ============================================
+  config.vm.define "inetRouter" do |inet|
+    inet.vm.box = "almalinux/9"
+    inet.vm.hostname = "inetRouter"
+    inet.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+    end
+
+    inet.vm.network "private_network", ip: "192.168.255.1", adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"
+    inet.vm.network "private_network", ip: "192.168.51.10", adapter: 3, netmask: "255.255.255.0"
+
+    inet.vm.provision "shell",
+      run: "always",
+      inline: <<-SHELL
+        sudo dnf install -y iptables-services
+        sudo systemctl enable iptables
+        sudo sysctl -w net.ipv4.ip_forward=1
+        grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
+        sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+        sudo iptables -A FORWARD -j ACCEPT
+        sudo iptables-save | sudo tee /etc/sysconfig/iptables
+        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
+        sudo nmcli con reload
+        sudo nmcli con up 'System eth1'
+      SHELL
+  end
 end
