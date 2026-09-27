@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
     central.vm.network "private_network", ip: "192.168.255.5", adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "office2Router-net"
     central.vm.network "private_network", ip: "192.168.0.33", adapter: 7, netmask: "255.255.255.240", virtualbox__intnet: "hardware2-net"
     # на схеме указано две сети Office hardware и не указана сеть wifi. Вторую сеть Office hardware заменил на сеть wifi.
-    central.vm.network "private_network", ip: "192.168.0.65", adapter: 8, netmask: "255.255.255.192", virtualbox__intnet: "wifi-net"
+    central.vm.network "private_network", ip: "192.168.0.65", adapter: 8, netmask: "255.255.255.192", virtualbox__intnet: "router-net2"
 
     central.vm.provision "shell",
     run: "always",
@@ -225,18 +225,18 @@ Vagrant.configure("2") do |config|
   # ============================================
   # 8. inetRouter2 (AlmaLinux 9)
   # ============================================
-  config.vm.define "inetRouter2" do |inet|
-    inet.vm.box = "almalinux/9"
-    inet.vm.hostname = "inetRouter2"
-    inet.vm.provider "virtualbox" do |v|
+  config.vm.define "inetRouter2" do |inet2|
+    inet2.vm.box = "almalinux/9"
+    inet2.vm.hostname = "inetRouter2"
+    inet2.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 2
     end
 
-    inet.vm.network "private_network", ip: "192.168.255.1", adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"
-    inet.vm.network "private_network", ip: "192.168.58.10", adapter: 3, netmask: "255.255.255.0"
+    inet2.vm.network "private_network", ip: "192.168.0.66", adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "router-net2"
+    inet2.vm.network "private_network", ip: "192.168.58.10", adapter: 3, netmask: "255.255.255.0"
 
-    inet.vm.provision "shell",
+    inet2.vm.provision "shell",
       run: "always",
       inline: <<-SHELL
         sudo dnf install -y iptables-services
