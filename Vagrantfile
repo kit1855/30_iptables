@@ -259,20 +259,21 @@ Vagrant.configure("2") do |config|
   # ============================================
   # 9. knocker (AlmaLinux 9)
   # ============================================
-  config.vm.define "knocker" do |inet|
-    inet.vm.box = "almalinux/9"
-    inet.vm.hostname = "knocker"
-    inet.vm.provider "virtualbox" do |v|
+  config.vm.define "knocker" do |knocker|
+    knocker.vm.box = "almalinux/9"
+    knocker.vm.hostname = "knocker"
+    knocker.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 2
     end
 
-    inet.vm.network "private_network", ip: "192.168.51.10", adapter: 2, netmask: "255.255.255.0"
+    knocker.vm.network "private_network", ip: "192.168.59.10", adapter: 2, netmask: "255.255.255.0"
 
-    inet.vm.provision "shell",
+    knocker.vm.provision "shell",
       run: "once",
       inline: <<-SHELL
         sudo dnf upgrade -y
+        sudo dnf install -y epel-release
         sudo dnf install -y knock
       SHELL
   end
