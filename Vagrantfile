@@ -9,9 +9,9 @@ Vagrant.configure("2") do |config|
   # ============================================
   # 1. inetRouter (AlmaLinux 9)
   # ============================================
-  config.vm.define "inetRouter2" do |inet|
+  config.vm.define "inetRouter" do |inet|
     inet.vm.box = "almalinux/9"
-    inet.vm.hostname = "inetRouter2"
+    inet.vm.hostname = "inetRouter"
     inet.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 2
@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
     central.vm.network "private_network", ip: "192.168.255.5", adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "office2Router-net"
     central.vm.network "private_network", ip: "192.168.0.33", adapter: 7, netmask: "255.255.255.240", virtualbox__intnet: "hardware2-net"
     # на схеме указано две сети Office hardware и не указана сеть wifi. Вторую сеть Office hardware заменил на сеть wifi.
-    central.vm.network "private_network", ip: "192.168.0.65", adapter: 8, netmask: "255.255.255.192", virtualbox__intnet: "router-net2"
+    central.vm.network "private_network", ip: "192.168.0.65", adapter: 8, netmask: "255.255.255.192", virtualbox__intnet: "wifi-net"
 
     central.vm.provision "shell",
     run: "always",
@@ -66,12 +66,10 @@ Vagrant.configure("2") do |config|
       sudo nmcli connection modify "System eth4" +ipv4.routes "192.168.2.0/24 192.168.255.10"
       sudo nmcli connection modify "System eth5" +ipv4.routes "192.168.1.0/24 192.168.255.6"
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.1"
-      sudo nmcli connection modify "System eth7" +ipv4.routes "192.168.58.0/24 192.168.0.66"
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
       sudo nmcli con up 'System eth4'
       sudo nmcli con up 'System eth5'
-      sudo nmcli con up 'System eth7'
     SHELL
   end
 
@@ -91,10 +89,6 @@ Vagrant.configure("2") do |config|
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-
-      sudo dnf install -y nginx
-
-
       nmcli con modify 'eth0' ipv4.never-default yes
       nmcli con reload
       nmcli con up 'eth0'
@@ -217,81 +211,4 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-# 1. реализовать knocking port. 
-#   centralRouter может попасть на ssh inetrRouter через knock скрипт (пример в материалах.)
-# 2. добавить inetRouter2, который виден(маршрутизируется (host-only тип сети для виртуалки)) с хоста или форвардится порт через локалхост.
-# 3. запустить nginx на centralServer.
-# 4. пробросить 80-ый порт на inetRouter2 8080.
-# 5. дефолт в инет оставить через inetRouter.
-
-  # ============================================
-  # 8. inetRouter2 (AlmaLinux 9)
-  # ============================================
-  config.vm.define "inetRouter2" do |inet2|
-    inet2.vm.box = "almalinux/9"
-    inet2.vm.hostname = "inetRouter2"
-    inet2.vm.provider "virtualbox" do |v|
-      v.memory = 2048
-      v.cpus = 2
-    end
-
-    inet2.vm.network "private_network", ip: "192.168.0.66", adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "router-net2"
-    inet2.vm.network "private_network", ip: "192.168.58.10", adapter: 3, netmask: "255.255.255.0"
-
-    inet2.vm.provision "shell",
-      run: "always",
-      inline: <<-SHELL
-        #sudo dnf upgrade -y
-        sudo dnf install -y epel-release
-        sudo dnf install -y knock-server iptables-services
-
-        # Отключаем firewalld
-        sudo systemctl stop firewalld
-        sudo systemctl disable firewalld
-        sudo systemctl mask firewalld
-
-        #  включаем iptables в автозагрузку и запускаем его
-        sudo systemctl enable iptables
-        sudo systemctl start iptables
-
-        # включаем форвардинг
-        sudo sysctl -w net.ipv4.ip_forward=1
-        grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
-
-        # Указываем маршрут до directors-net через centralRouter
-        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
-        sudo nmcli con reload
-        sudo nmcli con up 'System eth1'
-
-        # проброс порта
-        sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
-        sudo iptables -A FORWARD -p tcp -d 192.168.0.2 --dport 80 -j ACCEPT
-
-        # сохранение правил iptables
-        sudo iptables-save | sudo tee /etc/sysconfig/iptables
-      SHELL
-  end
-
-  # ============================================
-  # 9. knocker (AlmaLinux 9)
-  # ============================================
-  config.vm.define "knocker" do |knocker|
-    knocker.vm.box = "almalinux/9"
-    knocker.vm.hostname = "knocker"
-    knocker.vm.provider "virtualbox" do |v|
-      v.memory = 2048
-      v.cpus = 2
-    end
-
-    knocker.vm.network "private_network", ip: "192.168.59.10", adapter: 2, netmask: "255.255.255.0"
-    knocker.vm.network "private_network", ip: "192.168.58.12", adapter: 3, netmask: "255.255.255.0"
-
-    knocker.vm.provision "shell",
-      run: "once",
-      inline: <<-SHELL
-        #sudo dnf upgrade -y
-        sudo dnf install -y epel-release
-        sudo dnf install -y knock
-      SHELL
-  end
 end
