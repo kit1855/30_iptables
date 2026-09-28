@@ -66,10 +66,12 @@ Vagrant.configure("2") do |config|
       sudo nmcli connection modify "System eth4" +ipv4.routes "192.168.2.0/24 192.168.255.10"
       sudo nmcli connection modify "System eth5" +ipv4.routes "192.168.1.0/24 192.168.255.6"
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.1"
+      sudo nmcli connection modify "System eth7" +ipv4.routes "192.168.58.0/24 192.168.0.66"
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
       sudo nmcli con up 'System eth4'
       sudo nmcli con up 'System eth5'
+      sudo nmcli con up 'System eth7'
     SHELL
   end
 
