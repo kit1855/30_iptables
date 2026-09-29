@@ -23,7 +23,8 @@ Vagrant.configure("2") do |config|
     inet.vm.provision "shell",
       run: "always",
       inline: <<-SHELL
-        sudo dnf install -y iptables-services
+        sudo dnf install -y iptables-services epel-release
+        sudo dnf install -y knock-server
         sudo systemctl enable iptables
         sudo sysctl -w net.ipv4.ip_forward=1
         grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
