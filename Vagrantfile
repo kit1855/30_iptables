@@ -23,9 +23,31 @@ Vagrant.configure("2") do |config|
     inet.vm.provision "shell",
       run: "always",
       inline: <<-SHELL
+        # отключение фаервола
+        sudo systemctl stop firewalld
+        sudo systemctl disable firewalld
+        sudo systemctl mask firewalld
+
+        # установка пакетов
         sudo dnf install -y iptables-services epel-release
         sudo dnf install -y knock-server
         sudo systemctl enable iptables
+
+        # создание конфига
+        sudo tee /etc/knockd.conf > /dev/null <<'EOF'
+[options]
+    logfile = /var/log/knockd.log
+
+[opencloseSSH]
+    sequence      = 8881:tcp,7777:tcp,9991:tcp
+    seq_timeout   = 15
+    tcpflags      = syn
+    start_command = /usr/bin/iptables -A INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+    cmd_timeout   = 10
+    stop_command  = /usr/bin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+EOF
+
+
         sudo sysctl -w net.ipv4.ip_forward=1
         grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
         sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
