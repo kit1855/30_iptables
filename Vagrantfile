@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
         # установка пакетов
         sudo dnf install -y iptables-services epel-release
         sudo dnf install -y knock-server
-        sudo systemctl enable iptables
+        sudo systemctl enable --now iptables
 
         # создание конфига
         sudo tee /etc/knockd.conf > /dev/null <<'EOF'
@@ -47,11 +47,17 @@ Vagrant.configure("2") do |config|
     stop_command  = /usr/bin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
 EOF
 
-
         sudo sysctl -w net.ipv4.ip_forward=1
         grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
         sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
         sudo iptables -A FORWARD -j ACCEPT
+
+        # правила для SSH и knockd
+        sudo iptables -A INPUT -i eth0 -p tcp --dport 22 -j ACCEPT
+        sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+        sudo iptables -A INPUT -p tcp --dport 22 -j DROP
+        sudo systemctl enable --now knockd
+
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
         sudo nmcli con reload
