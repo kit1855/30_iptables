@@ -93,6 +93,11 @@ EOF
     central.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+
+      # установка пакетов
+      sudo dnf install -y epel-release
+      sudo dnf install -y knock
+
       nmcli con modify 'eth0' ipv4.never-default yes
       nmcli con reload
       nmcli con up 'eth0'
