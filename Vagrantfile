@@ -23,6 +23,13 @@ Vagrant.configure("2") do |config|
     inet.vm.provision "shell",
       run: "always",
       inline: <<-SHELL
+
+        # добавляем публичный ключ в authorized_keys
+        sudo mkdir -p /home/vagrant/.ssh
+        sudo cat /vagrant/key/vagrant_key.pub >> /home/vagrant/.ssh/authorized_keys
+        sudo chmod 600 /home/vagrant/.ssh/authorized_keys
+        sudo chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+
         # отключение фаервола
         sudo systemctl stop firewalld
         sudo systemctl disable firewalld
@@ -88,19 +95,37 @@ EOF
     central.vm.network "private_network", ip: "192.168.255.5", adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "office2Router-net"
     central.vm.network "private_network", ip: "192.168.0.33", adapter: 7, netmask: "255.255.255.240", virtualbox__intnet: "hardware2-net"
     # на схеме указано две сети Office hardware и не указана сеть wifi. Вторую сеть Office hardware заменил на сеть wifi.
+    # этот комментарий относится к версии вагрантфайла для домашней работы по архитектуре сетей.
+    # для домашней работы по iptables это уже не отностится. Это сеть использоваться будет для ВМ inetRouter2.
+    # название сети буду переименовывать.
     central.vm.network "private_network", ip: "192.168.0.65", adapter: 8, netmask: "255.255.255.192", virtualbox__intnet: "wifi-net"
 
     central.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
 
+      # копируем приватный ключ для SSH
+      sudo mkdir -p /home/vagrant/.ssh
+      sudo cp /vagrant/key/vagrant_key /home/vagrant/.ssh/id_rsa
+      sudo chmod 600 /home/vagrant/.ssh/id_rsa
+      sudo chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
+
       # установка пакетов
       sudo dnf install -y epel-release
       sudo dnf install -y knock
 
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+      # создание скрипта knok
+      sudo touch /usr/local/bin/knock-ssh
+      sudo tee /usr/local/bin/knock-ssh > /dev/null <<'EOF'
+#!/bin/bash
+knock 192.168.255.1 8881 7777 9991 -d 5
+ssh vagrant@192.168.255.1
+EOF
+      sudo chmod +x /usr/local/bin/knock-ssh
+
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo sysctl -w net.ipv4.ip_forward=1
       grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
       sudo nmcli connection modify "System eth4" +ipv4.routes "192.168.2.0/24 192.168.255.10"
