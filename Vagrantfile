@@ -44,14 +44,14 @@ Vagrant.configure("2") do |config|
         sudo tee /etc/knockd.conf > /dev/null <<'EOF'
 [options]
     logfile = /var/log/knockd.log
-
+    interface = eth1
 [opencloseSSH]
     sequence      = 8881:tcp,7777:tcp,9991:tcp
     seq_timeout   = 15
-    tcpflags      = syn
-    start_command = /usr/bin/iptables -A INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+#    tcpflags      = syn
+    start_command = /usr/sbin/iptables -I INPUT 1 -s %IP% -p tcp --dport 22 -j ACCEPT
     cmd_timeout   = 10
-    stop_command  = /usr/bin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+    stop_command  = /usr/sbin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
 EOF
 
         sudo sysctl -w net.ipv4.ip_forward=1
