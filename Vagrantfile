@@ -131,13 +131,13 @@ EOF
       sudo nmcli connection modify "System eth5" +ipv4.routes "192.168.1.0/24 192.168.255.6"
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.1"
 
-      sudo nmcli connection modify "System eth7" +ipv4.routes "192.168.0.64/26 192.168.0.66"
+
 
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
       sudo nmcli con up 'System eth4'
       sudo nmcli con up 'System eth5'
-      sudo nmcli con up 'System eth7'
+
     SHELL
   end
 
@@ -283,7 +283,7 @@ EOF
   # ============================================
   # 8. inetRouter2 (AlmaLinux 9)
   # ============================================
-  config.vm.define "inetRouter" do |inet2|
+  config.vm.define "inetRouter2" do |inet2|
     inet2.vm.box = "almalinux/9"
     inet2.vm.hostname = "inetRouter2"
     inet2.vm.provider "virtualbox" do |v|
