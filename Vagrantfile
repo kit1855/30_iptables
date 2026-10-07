@@ -70,8 +70,8 @@ EOF
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
         sudo iptables -A INPUT -p tcp --dport 22 -j DROP
         sudo systemctl enable --now knockd
-
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
+
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
         sudo nmcli con reload
         sudo nmcli con up 'System eth1'
@@ -130,14 +130,10 @@ EOF
       sudo nmcli connection modify "System eth4" +ipv4.routes "192.168.2.0/24 192.168.255.10"
       sudo nmcli connection modify "System eth5" +ipv4.routes "192.168.1.0/24 192.168.255.6"
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.1"
-
-
-
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
       sudo nmcli con up 'System eth4'
       sudo nmcli con up 'System eth5'
-
     SHELL
   end
 
@@ -157,12 +153,16 @@ EOF
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+
+      sudo dnf install -y nginx
+      sudo systemctl enable --now nginx.service
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.0.1"
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
+
       SHELL
   end
 
@@ -188,9 +188,9 @@ EOF
     office1.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo sysctl -w net.ipv4.ip_forward=1
       grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.9"
@@ -215,9 +215,9 @@ EOF
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.2.129"
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
@@ -243,9 +243,9 @@ EOF
     office2.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo sysctl -w net.ipv4.ip_forward=1
       grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.255.5"
@@ -270,9 +270,9 @@ EOF
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
-      nmcli con modify 'eth0' ipv4.never-default yes
-      nmcli con reload
-      nmcli con up 'eth0'
+      sudo nmcli con modify 'eth0' ipv4.never-default yes
+      sudo nmcli con reload
+      sudo nmcli con up 'eth0'
       sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.1.1"
       sudo nmcli con reload
       sudo nmcli con up 'System eth1'
@@ -298,55 +298,31 @@ EOF
       run: "always",
       inline: <<-SHELL
 
-        # добавляем публичный ключ в authorized_keys
-        sudo mkdir -p /home/vagrant/.ssh
-        sudo cat /vagrant/key/vagrant_key.pub >> /home/vagrant/.ssh/authorized_keys
-        sudo chmod 600 /home/vagrant/.ssh/authorized_keys
-        sudo chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
-
         # отключение фаервола
         sudo systemctl stop firewalld
         sudo systemctl disable firewalld
         sudo systemctl mask firewalld
 
         # установка пакетов
-        sudo dnf install -y iptables-services epel-release
-        sudo dnf install -y knock-server
+        sudo dnf install -y iptables-services
         sudo systemctl enable --now iptables
-
-        # создание конфига
-        sudo tee /etc/knockd.conf > /dev/null <<'EOF'
-[options]
-    logfile = /var/log/knockd.log
-    interface = eth1
-[opencloseSSH]
-    sequence      = 8881:tcp,7777:tcp,9991:tcp
-    seq_timeout   = 15
-#    tcpflags      = syn
-    start_command = /usr/sbin/iptables -I INPUT 1 -s %IP% -p tcp --dport 22 -j ACCEPT
-    cmd_timeout   = 10
-    stop_command  = /usr/sbin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
-EOF
-
-        sudo sysctl -w net.ipv4.ip_forward=1
-        grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
 
         # сброс старых правил
         sudo iptables -F
         sudo iptables -t nat -F
 
-        # правила для НАТ и форвардинга
-        sudo iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+        sudo sysctl -w net.ipv4.ip_forward=1
+        grep -q "net.ipv4.ip_forward" /etc/sysctl.conf || echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
         sudo iptables -A FORWARD -j ACCEPT
 
-        # правила для SSH и knockd
         sudo iptables -A INPUT -i eth0 -p tcp --dport 22 -j ACCEPT
         sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-        sudo iptables -A INPUT -p tcp --dport 22 -j DROP
-        sudo systemctl enable --now knockd
 
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
+        sudo iptables -A FORWARD -p tcp -d 192.168.0.2 --dport 80 -j ACCEPT
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
-        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/16 192.168.255.2"
+
+        sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
         sudo nmcli con reload
         sudo nmcli con up 'System eth1'
       SHELL
