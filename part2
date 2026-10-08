@@ -1,0 +1,51 @@
+# проверка пункта 1 "реализовать knocking port."
+
+# подключение по ssh без порткнокинг не работает, пришлось нажать CTRL-C
+PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh centralRouter
+[vagrant@centralRouter ~]$ ssh vagrant@192.168.255.1
+^C
+
+# скрипт отработал- зайти по ssh на ВМ инетРоутер получилось.
+[vagrant@centralRouter ~]$ knock-ssh
+The authenticity of host '192.168.255.1 (192.168.255.1)' can't be established.
+ED25519 key fingerprint is SHA256:zdfdf4XvOOaHD9MLVO/GjWhh5qAdJntC332zpD27nKw.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.255.1' (ED25519) to the list of known hosts.
+[vagrant@inetRouter ~]$ whoami
+vagrant
+[vagrant@inetRouter ~]$ hostname
+inetRouter
+[vagrant@inetRouter ~]$ exit
+logout
+Connection to 192.168.255.1 closed.
+
+# сделал задержку 10 секунд, чтоб после попробовать подключиться по ssh еще раз
+# не получилось, т.к. срок предыдущего простукивания вышел, а перед этим подключением
+# простукивание портов не было выполнено
+[vagrant@centralRouter ~]$ sleep 10
+[vagrant@centralRouter ~]$ ssh vagrant@192.168.255.1
+^C
+[vagrant@centralRouter ~]$ exit
+logout
+
+# проверка логов на ВС инетРоутер, где зафиксированы действия описанные выше
+PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh inetRouter
+Last login: Thu Oct  8 16:53:00 2026 from 192.168.255.2
+[vagrant@inetRouter ~]$ sudo cat /var/log/knockd.log
+[2026-10-08 16:35] starting up, listening on eth1
+[2026-10-08 16:52] 192.168.255.2: opencloseSSH: Stage 1
+[2026-10-08 16:52] 192.168.255.2: opencloseSSH: Stage 2
+[2026-10-08 16:52] 192.168.255.2: opencloseSSH: Stage 3
+[2026-10-08 16:52] 192.168.255.2: opencloseSSH: OPEN SESAME
+[2026-10-08 16:52] opencloseSSH: running command: /usr/sbin/iptables -I INPUT 1 -s 192.168.255.2 -p tcp --dport 22 -j ACCEPT
+
+[2026-10-08 16:53] 192.168.255.2: opencloseSSH: command timeout
+[2026-10-08 16:53] opencloseSSH: running command: /usr/sbin/iptables -D INPUT -s 192.168.255.2 -p tcp --dport 22 -j ACCEPT
+
+[vagrant@inetRouter ~]$ date
+Thu Oct  8 04:54:44 PM UTC 2026
+[vagrant@inetRouter ~]$
+
+# проверка пункта 2 "добавить inetRouter2, который виден(маршрутизируется (host-only тип сети для виртуалки)) с хоста или форвардится порт через локалхост.
+"
