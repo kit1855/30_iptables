@@ -1,0 +1,539 @@
+# создание ssh ключей
+
+PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> ssh-keygen -t rsa -b 2048 -f ./vagrant_key
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in ./vagrant_key
+Your public key has been saved in ./vagrant_key.pub
+The key fingerprint is:
+SHA256:Bem80Hmy0iJOmt5Qn+CpDQsVT/6I1/ECu+dG14x7uzE lenovo@DESKTOP-VF3A615
+The key's randomart image is:
++---[RSA 2048]----+
+|        ..       |
+|        ..       |
+|  . .  + ..      |
+|   =  . *..      |
+|  . * .oSO       |
+| . +oX++* o      |
+|. +=*o*+..E      |
+| .oO..o.. .o     |
+| .+ ++.  .oo     |
++----[SHA256]-----+
+
+# поднятие четырёх ВМ для этого домашнего задания, т.к. в остальных нет необходимости.
+
+PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant up inetRouter centralRouter centralServer inetRouter2
+Bringing machine 'inetRouter' up with 'virtualbox' provider...
+Bringing machine 'centralRouter' up with 'virtualbox' provider...
+Bringing machine 'centralServer' up with 'virtualbox' provider...
+Bringing machine 'inetRouter2' up with 'virtualbox' provider...
+==> inetRouter: You assigned a static IP ending in ".1" or ":1" to this machine.
+==> inetRouter: This is very often used by the router and can cause the
+==> inetRouter: network to not work properly. If the network doesn't work
+==> inetRouter: properly, try changing this IP.
+==> inetRouter: Importing base box 'almalinux/9'...
+==> inetRouter: Matching MAC address for NAT networking...
+==> inetRouter: You assigned a static IP ending in ".1" or ":1" to this machine.
+==> inetRouter: This is very often used by the router and can cause the
+==> inetRouter: network to not work properly. If the network doesn't work
+==> inetRouter: properly, try changing this IP.
+==> inetRouter: Checking if box 'almalinux/9' version '1.0.0' is up to date...
+==> inetRouter: Setting the name of the VM: dz3_inetRouter_1791477190089_61626
+==> inetRouter: Clearing any previously set network interfaces...
+==> inetRouter: Preparing network interfaces based on configuration...
+    inetRouter: Adapter 1: nat
+    inetRouter: Adapter 2: intnet
+    inetRouter: Adapter 3: hostonly
+==> inetRouter: Forwarding ports...
+    inetRouter: 22 (guest) => 2222 (host) (adapter 1)
+==> inetRouter: Running 'pre-boot' VM customizations...
+==> inetRouter: Booting VM...
+==> inetRouter: Waiting for machine to boot. This may take a few minutes...
+    inetRouter: SSH address: 127.0.0.1:2222
+    inetRouter: SSH username: vagrant
+    inetRouter: SSH auth method: private key
+    inetRouter:
+    inetRouter: Vagrant insecure key detected. Vagrant will automatically replace
+    inetRouter: this with a newly generated keypair for better security.
+    inetRouter:
+    inetRouter: Inserting generated public key within guest...
+    inetRouter: Removing insecure key from the guest if it's present...
+    inetRouter: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> inetRouter: Machine booted and ready!
+==> inetRouter: Checking for guest additions in VM...
+==> inetRouter: Setting hostname...
+==> inetRouter: Configuring and enabling network interfaces...
+==> inetRouter: Mounting shared folders...
+    inetRouter: D:/linux/Professional/30 Фильтрация трафика - iptables/dz3 => /vagrant
+==> inetRouter: Running provisioner: shell...
+    inetRouter: Running: inline script
+    inetRouter: Failed to stop firewalld.service: Unit firewalld.service not loaded.
+    inetRouter: Failed to disable unit: Unit file firewalld.service does not exist.
+    inetRouter: Unit firewalld.service does not exist, proceeding anyway.
+    inetRouter: Created symlink /etc/systemd/system/firewalld.service → /dev/null.
+    inetRouter: AlmaLinux 9 - AppStream                         1.6 MB/s |  28 MB     00:17
+    inetRouter: AlmaLinux 9 - BaseOS                            1.2 MB/s |  45 MB     00:38
+    inetRouter: AlmaLinux 9 - Extras                             39 kB/s |  33 kB     00:00
+    inetRouter: Dependencies resolved.
+    inetRouter: ================================================================================
+    inetRouter:  Package                   Arch       Version               Repository     Size
+    inetRouter: ================================================================================
+    inetRouter: Installing:
+    inetRouter:  epel-release              noarch     9-9.el9               extras         18 k
+    inetRouter:  iptables-nft-services     noarch     1.8.10-11.el9_5       appstream      18 k
+    inetRouter: Upgrading:
+    inetRouter:  iptables-libs             x86_64     1.8.10-11.el9_5       baseos        397 k
+    inetRouter: Installing dependencies:
+    inetRouter:  iptables-nft              x86_64     1.8.10-11.el9_5       baseos        187 k
+    inetRouter:  libnftnl                  x86_64     1.2.6-4.el9_4         baseos         87 k
+    inetRouter:
+    inetRouter: Transaction Summary
+    inetRouter: ================================================================================
+    inetRouter: Install  4 Packages
+    inetRouter: Upgrade  1 Package
+    inetRouter:
+    inetRouter: Total download size: 707 k
+    inetRouter: Downloading Packages:
+    inetRouter: (1/5): iptables-nft-services-1.8.10-11.el9_5.no  95 kB/s |  18 kB     00:00
+    inetRouter: (2/5): libnftnl-1.2.6-4.el9_4.x86_64.rpm        269 kB/s |  87 kB     00:00
+    inetRouter: (3/5): epel-release-9-9.el9.noarch.rpm          133 kB/s |  18 kB     00:00
+    inetRouter: (4/5): iptables-nft-1.8.10-11.el9_5.x86_64.rpm  519 kB/s | 187 kB     00:00
+    inetRouter: (5/5): iptables-libs-1.8.10-11.el9_5.x86_64.rpm 961 kB/s | 397 kB     00:00
+    inetRouter: --------------------------------------------------------------------------------
+    inetRouter: Total                                           310 kB/s | 707 kB     00:02
+    inetRouter: Running transaction check
+    inetRouter: Transaction check succeeded.
+    inetRouter: Running transaction test
+    inetRouter: Transaction test succeeded.
+    inetRouter: Running transaction
+    inetRouter:   Preparing        :                                                        1/1
+    inetRouter:   Upgrading        : iptables-libs-1.8.10-11.el9_5.x86_64                   1/6
+    inetRouter:   Installing       : libnftnl-1.2.6-4.el9_4.x86_64                          2/6
+    inetRouter:   Installing       : iptables-nft-1.8.10-11.el9_5.x86_64                    3/6
+    inetRouter:   Running scriptlet: iptables-nft-1.8.10-11.el9_5.x86_64                    3/6
+    inetRouter:   Installing       : iptables-nft-services-1.8.10-11.el9_5.noarch           4/6
+    inetRouter:   Running scriptlet: iptables-nft-services-1.8.10-11.el9_5.noarch           4/6
+    inetRouter:   Installing       : epel-release-9-9.el9.noarch                            5/6
+    inetRouter:   Running scriptlet: epel-release-9-9.el9.noarch                            5/6
+    inetRouter: Many EPEL packages require the CodeReady Builder (CRB) repository.
+    inetRouter: It is recommended that you run /usr/bin/crb enable to enable the CRB repository.
+    inetRouter:
+    inetRouter:   Cleanup          : iptables-libs-1.8.10-4.el9_4.x86_64                    6/6
+    inetRouter:   Running scriptlet: iptables-libs-1.8.10-4.el9_4.x86_64                    6/6
+    inetRouter:   Verifying        : iptables-nft-services-1.8.10-11.el9_5.noarch           1/6
+    inetRouter:   Verifying        : iptables-nft-1.8.10-11.el9_5.x86_64                    2/6
+    inetRouter:   Verifying        : libnftnl-1.2.6-4.el9_4.x86_64                          3/6
+    inetRouter:   Verifying        : epel-release-9-9.el9.noarch                            4/6
+    inetRouter:   Verifying        : iptables-libs-1.8.10-11.el9_5.x86_64                   5/6
+    inetRouter:   Verifying        : iptables-libs-1.8.10-4.el9_4.x86_64                    6/6
+    inetRouter:
+    inetRouter: Upgraded:
+    inetRouter:   iptables-libs-1.8.10-11.el9_5.x86_64
+    inetRouter: Installed:
+    inetRouter:   epel-release-9-9.el9.noarch
+    inetRouter:   iptables-nft-1.8.10-11.el9_5.x86_64
+    inetRouter:   iptables-nft-services-1.8.10-11.el9_5.noarch
+    inetRouter:   libnftnl-1.2.6-4.el9_4.x86_64
+    inetRouter:
+    inetRouter: Complete!
+    inetRouter: Extra Packages for Enterprise Linux 9 - x86_64  994 kB/s |  20 MB     00:20
+    inetRouter: Extra Packages for Enterprise Linux 9 openh264  2.0 kB/s | 2.5 kB     00:01
+    inetRouter: Last metadata expiration check: 0:00:01 ago on Thu 08 Oct 2026 04:35:50 PM UTC.
+    inetRouter: Dependencies resolved.
+    inetRouter: ================================================================================
+    inetRouter:  Package               Architecture    Version              Repository     Size
+    inetRouter: ================================================================================
+    inetRouter: Installing:
+    inetRouter:  knock-server          x86_64          0.8-12.el9           epel           41 k
+    inetRouter:
+    inetRouter: Transaction Summary
+    inetRouter: ================================================================================
+    inetRouter: Install  1 Package
+    inetRouter:
+    inetRouter: Total download size: 41 k
+    inetRouter: Installed size: 102 k
+    inetRouter: Downloading Packages:
+    inetRouter: knock-server-0.8-12.el9.x86_64.rpm              177 kB/s |  41 kB     00:00
+    inetRouter: --------------------------------------------------------------------------------
+    inetRouter: Total                                            36 kB/s |  41 kB     00:01
+    inetRouter: Extra Packages for Enterprise Linux 9 - x86_64  1.6 MB/s | 1.6 kB     00:00
+    inetRouter: Importing GPG key 0x3228467C:
+    inetRouter:  Userid     : "Fedora (epel9) <epel@fedoraproject.org>"
+    inetRouter:  Fingerprint: FF8A D134 4597 106E CE81 3B91 8A38 72BF 3228 467C
+    inetRouter:  From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+    inetRouter: Key imported successfully
+    inetRouter: Running transaction check
+    inetRouter: Transaction check succeeded.
+    inetRouter: Running transaction test
+    inetRouter: Transaction test succeeded.
+    inetRouter: Running transaction
+    inetRouter:   Preparing        :                                                        1/1
+    inetRouter:   Installing       : knock-server-0.8-12.el9.x86_64                         1/1
+    inetRouter:   Running scriptlet: knock-server-0.8-12.el9.x86_64                         1/1
+    inetRouter:   Verifying        : knock-server-0.8-12.el9.x86_64                         1/1
+    inetRouter:
+    inetRouter: Installed:
+    inetRouter:   knock-server-0.8-12.el9.x86_64
+    inetRouter:
+    inetRouter: Complete!
+    inetRouter: Created symlink /etc/systemd/system/multi-user.target.wants/iptables.service → /usr/lib/systemd/system/iptables.service.
+    inetRouter: net.ipv4.ip_forward = 1
+    inetRouter: net.ipv4.ip_forward = 1
+    inetRouter: Created symlink /etc/systemd/system/multi-user.target.wants/knockd.service → /usr/lib/systemd/system/knockd.service.
+    inetRouter: # Generated by iptables-save v1.8.10 (nf_tables) on Thu Oct  8 16:35:56 2026
+    inetRouter: *filter
+    inetRouter: :INPUT ACCEPT [0:0]
+    inetRouter: :FORWARD ACCEPT [0:0]
+    inetRouter: :OUTPUT ACCEPT [3:564]
+    inetRouter: -A INPUT -i eth0 -p tcp -m tcp --dport 22 -j ACCEPT
+    inetRouter: -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+    inetRouter: -A INPUT -p tcp -m tcp --dport 22 -j DROP
+    inetRouter: -A FORWARD -j ACCEPT
+    inetRouter: COMMIT
+    inetRouter: # Completed on Thu Oct  8 16:35:56 2026
+    inetRouter: # Generated by iptables-save v1.8.10 (nf_tables) on Thu Oct  8 16:35:56 2026
+    inetRouter: *nat
+    inetRouter: :PREROUTING ACCEPT [0:0]
+    inetRouter: :INPUT ACCEPT [0:0]
+    inetRouter: :OUTPUT ACCEPT [0:0]
+    inetRouter: :POSTROUTING ACCEPT [0:0]
+    inetRouter: -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+    inetRouter: COMMIT
+    inetRouter: # Completed on Thu Oct  8 16:35:56 2026
+    inetRouter: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/5)
+==> centralRouter: You assigned a static IP ending in ".1" or ":1" to this machine.
+==> centralRouter: This is very often used by the router and can cause the
+==> centralRouter: network to not work properly. If the network doesn't work
+==> centralRouter: properly, try changing this IP.
+==> centralRouter: Importing base box 'almalinux/9'...
+==> centralRouter: Matching MAC address for NAT networking...
+==> centralRouter: You assigned a static IP ending in ".1" or ":1" to this machine.
+==> centralRouter: This is very often used by the router and can cause the
+==> centralRouter: network to not work properly. If the network doesn't work
+==> centralRouter: properly, try changing this IP.
+==> centralRouter: Checking if box 'almalinux/9' version '1.0.0' is up to date...
+==> centralRouter: Setting the name of the VM: dz3_centralRouter_1791477363352_20174
+==> centralRouter: Fixed port collision for 22 => 2222. Now on port 2200.
+==> centralRouter: Clearing any previously set network interfaces...
+==> centralRouter: Preparing network interfaces based on configuration...
+    centralRouter: Adapter 1: nat
+    centralRouter: Adapter 2: intnet
+    centralRouter: Adapter 3: hostonly
+    centralRouter: Adapter 4: intnet
+    centralRouter: Adapter 5: intnet
+    centralRouter: Adapter 6: intnet
+    centralRouter: Adapter 7: intnet
+    centralRouter: Adapter 8: intnet
+==> centralRouter: Forwarding ports...
+    centralRouter: 22 (guest) => 2200 (host) (adapter 1)
+==> centralRouter: Running 'pre-boot' VM customizations...
+==> centralRouter: Booting VM...
+==> centralRouter: Waiting for machine to boot. This may take a few minutes...
+    centralRouter: SSH address: 127.0.0.1:2200
+    centralRouter: SSH username: vagrant
+    centralRouter: SSH auth method: private key
+    centralRouter:
+    centralRouter: Vagrant insecure key detected. Vagrant will automatically replace
+    centralRouter: this with a newly generated keypair for better security.
+    centralRouter:
+    centralRouter: Inserting generated public key within guest...
+    centralRouter: Removing insecure key from the guest if it's present...
+    centralRouter: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> centralRouter: Machine booted and ready!
+==> centralRouter: Checking for guest additions in VM...
+==> centralRouter: Setting hostname...
+==> centralRouter: Configuring and enabling network interfaces...
+==> centralRouter: Mounting shared folders...
+    centralRouter: D:/linux/Professional/30 Фильтрация трафика - iptables/dz3 => /vagrant
+==> centralRouter: Running provisioner: shell...
+    centralRouter: Running: inline script
+    centralRouter: AlmaLinux 9 - AppStream                         1.1 MB/s |  28 MB     00:25
+    centralRouter: AlmaLinux 9 - BaseOS                            1.7 MB/s |  45 MB     00:25
+    centralRouter: AlmaLinux 9 - Extras                            2.4 kB/s |  33 kB     00:13
+    centralRouter: Dependencies resolved.
+    centralRouter: ================================================================================
+    centralRouter:  Package               Architecture    Version            Repository       Size
+    centralRouter: ================================================================================
+    centralRouter: Installing:
+    centralRouter:  epel-release          noarch          9-9.el9            extras           18 k
+    centralRouter:
+    centralRouter: Transaction Summary
+    centralRouter: ================================================================================
+    centralRouter: Install  1 Package
+    centralRouter:
+    centralRouter: Total download size: 18 k
+    centralRouter: Installed size: 26 k
+    centralRouter: Downloading Packages:
+    centralRouter: epel-release-9-9.el9.noarch.rpm                 157 kB/s |  18 kB     00:00
+    centralRouter: --------------------------------------------------------------------------------
+    centralRouter: Total                                            27 kB/s |  18 kB     00:00
+    centralRouter: Running transaction check
+    centralRouter: Transaction check succeeded.
+    centralRouter: Running transaction test
+    centralRouter: Transaction test succeeded.
+    centralRouter: Running transaction
+    centralRouter:   Preparing        :                                                        1/1
+    centralRouter:   Installing       : epel-release-9-9.el9.noarch                            1/1
+    centralRouter:   Running scriptlet: epel-release-9-9.el9.noarch                            1/1
+    centralRouter: Many EPEL packages require the CodeReady Builder (CRB) repository.
+    centralRouter: It is recommended that you run /usr/bin/crb enable to enable the CRB repository.
+    centralRouter:
+    centralRouter:   Verifying        : epel-release-9-9.el9.noarch                            1/1
+    centralRouter:
+    centralRouter: Installed:
+    centralRouter:   epel-release-9-9.el9.noarch
+    centralRouter:
+    centralRouter: Complete!
+    centralRouter: Extra Packages for Enterprise Linux 9 - x86_64  1.4 MB/s |  20 MB     00:14
+    centralRouter: Extra Packages for Enterprise Linux 9 openh264  1.0 kB/s | 2.5 kB     00:02
+    centralRouter: Dependencies resolved.
+    centralRouter: ================================================================================
+    centralRouter:  Package          Architecture      Version               Repository       Size
+    centralRouter: ================================================================================
+    centralRouter: Installing:
+    centralRouter:  knock            x86_64            0.8-12.el9            epel             25 k
+    centralRouter:
+    centralRouter: Transaction Summary
+    centralRouter: ================================================================================
+    centralRouter: Install  1 Package
+    centralRouter:
+    centralRouter: Total download size: 25 k
+    centralRouter: Installed size: 58 k
+    centralRouter: Downloading Packages:
+    centralRouter: knock-0.8-12.el9.x86_64.rpm                      29 kB/s |  25 kB     00:00
+    centralRouter: --------------------------------------------------------------------------------
+    centralRouter: Total                                           8.4 kB/s |  25 kB     00:02
+    centralRouter: Extra Packages for Enterprise Linux 9 - x86_64  1.6 MB/s | 1.6 kB     00:00
+    centralRouter: Importing GPG key 0x3228467C:
+    centralRouter:  Userid     : "Fedora (epel9) <epel@fedoraproject.org>"
+    centralRouter:  Fingerprint: FF8A D134 4597 106E CE81 3B91 8A38 72BF 3228 467C
+    centralRouter:  From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+    centralRouter: Key imported successfully
+    centralRouter: Running transaction check
+    centralRouter: Transaction check succeeded.
+    centralRouter: Running transaction test
+    centralRouter: Transaction test succeeded.
+    centralRouter: Running transaction
+    centralRouter:   Preparing        :                                                        1/1
+    centralRouter:   Installing       : knock-0.8-12.el9.x86_64                                1/1
+    centralRouter:   Running scriptlet: knock-0.8-12.el9.x86_64                                1/1
+    centralRouter:   Verifying        : knock-0.8-12.el9.x86_64                                1/1
+    centralRouter:
+    centralRouter: Installed:
+    centralRouter:   knock-0.8-12.el9.x86_64
+    centralRouter:
+    centralRouter: Complete!
+    centralRouter: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/10)
+    centralRouter: net.ipv4.ip_forward = 1
+    centralRouter: net.ipv4.ip_forward = 1
+    centralRouter: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/11)
+    centralRouter: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/12)
+    centralRouter: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/13)
+==> centralServer: Importing base box 'almalinux/9'...
+==> centralServer: Matching MAC address for NAT networking...
+==> centralServer: Checking if box 'almalinux/9' version '1.0.0' is up to date...
+==> centralServer: Setting the name of the VM: dz3_centralServer_1791477543781_99616
+==> centralServer: Fixed port collision for 22 => 2222. Now on port 2201.
+==> centralServer: Clearing any previously set network interfaces...
+==> centralServer: Preparing network interfaces based on configuration...
+    centralServer: Adapter 1: nat
+    centralServer: Adapter 2: intnet
+    centralServer: Adapter 3: hostonly
+==> centralServer: Forwarding ports...
+    centralServer: 22 (guest) => 2201 (host) (adapter 1)
+==> centralServer: Running 'pre-boot' VM customizations...
+==> centralServer: Booting VM...
+==> centralServer: Waiting for machine to boot. This may take a few minutes...
+    centralServer: SSH address: 127.0.0.1:2201
+    centralServer: SSH username: vagrant
+    centralServer: SSH auth method: private key
+    centralServer:
+    centralServer: Vagrant insecure key detected. Vagrant will automatically replace
+    centralServer: this with a newly generated keypair for better security.
+    centralServer:
+    centralServer: Inserting generated public key within guest...
+    centralServer: Removing insecure key from the guest if it's present...
+    centralServer: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> centralServer: Machine booted and ready!
+==> centralServer: Checking for guest additions in VM...
+==> centralServer: Setting hostname...
+==> centralServer: Configuring and enabling network interfaces...
+==> centralServer: Mounting shared folders...
+    centralServer: D:/linux/Professional/30 Фильтрация трафика - iptables/dz3 => /vagrant
+==> centralServer: Running provisioner: shell...
+    centralServer: Running: inline script
+    centralServer: AlmaLinux 9 - AppStream                         1.3 MB/s |  28 MB     00:22
+    centralServer: AlmaLinux 9 - BaseOS                            1.6 MB/s |  45 MB     00:28
+    centralServer: AlmaLinux 9 - Extras                             41 kB/s |  33 kB     00:00
+    centralServer: Dependencies resolved.
+    centralServer: ================================================================================
+    centralServer:  Package                Arch    Version                        Repository  Size
+    centralServer: ================================================================================
+    centralServer: Installing:
+    centralServer:  nginx                  x86_64  2:1.20.1-28.el9_8.6.alma.1     appstream   38 k
+    centralServer: Installing dependencies:
+    centralServer:  almalinux-logos-httpd  noarch  90.7-1.el9                     appstream   18 k
+    centralServer:  nginx-core             x86_64  2:1.20.1-28.el9_8.6.alma.1     appstream  571 k
+    centralServer:  nginx-filesystem       noarch  2:1.20.1-28.el9_8.6.alma.1     appstream   11 k
+    centralServer:
+    centralServer: Transaction Summary
+    centralServer: ================================================================================
+    centralServer: Install  4 Packages
+    centralServer:
+    centralServer: Total download size: 638 k
+    centralServer: Installed size: 1.8 M
+    centralServer: Downloading Packages:
+    centralServer: (1/4): almalinux-logos-httpd-90.7-1.el9.noarch. 128 kB/s |  18 kB     00:00
+    centralServer: (2/4): nginx-1.20.1-28.el9_8.6.alma.1.x86_64.rp 205 kB/s |  38 kB     00:00
+    centralServer: (3/4): nginx-filesystem-1.20.1-28.el9_8.6.alma. 224 kB/s |  11 kB     00:00
+    centralServer: (4/4): nginx-core-1.20.1-28.el9_8.6.alma.1.x86_ 1.2 MB/s | 571 kB     00:00
+    centralServer: --------------------------------------------------------------------------------
+    centralServer: Total                                           627 kB/s | 638 kB     00:01
+    centralServer: Running transaction check
+    centralServer: Transaction check succeeded.
+    centralServer: Running transaction test
+    centralServer: Transaction test succeeded.
+    centralServer: Running transaction
+    centralServer:   Preparing        :                                                        1/1
+    centralServer:   Running scriptlet: nginx-filesystem-2:1.20.1-28.el9_8.6.alma.1.noarch     1/4
+    centralServer:   Installing       : nginx-filesystem-2:1.20.1-28.el9_8.6.alma.1.noarch     1/4
+    centralServer:   Installing       : nginx-core-2:1.20.1-28.el9_8.6.alma.1.x86_64           2/4
+    centralServer:   Installing       : almalinux-logos-httpd-90.7-1.el9.noarch                3/4
+    centralServer:   Installing       : nginx-2:1.20.1-28.el9_8.6.alma.1.x86_64                4/4
+    centralServer:   Running scriptlet: nginx-2:1.20.1-28.el9_8.6.alma.1.x86_64                4/4
+    centralServer:   Verifying        : almalinux-logos-httpd-90.7-1.el9.noarch                1/4
+    centralServer:   Verifying        : nginx-2:1.20.1-28.el9_8.6.alma.1.x86_64                2/4
+    centralServer:   Verifying        : nginx-core-2:1.20.1-28.el9_8.6.alma.1.x86_64           3/4
+    centralServer:   Verifying        : nginx-filesystem-2:1.20.1-28.el9_8.6.alma.1.noarch     4/4
+    centralServer:
+    centralServer: Installed:
+    centralServer:   almalinux-logos-httpd-90.7-1.el9.noarch
+    centralServer:   nginx-2:1.20.1-28.el9_8.6.alma.1.x86_64
+    centralServer:   nginx-core-2:1.20.1-28.el9_8.6.alma.1.x86_64
+    centralServer:   nginx-filesystem-2:1.20.1-28.el9_8.6.alma.1.noarch
+    centralServer:
+    centralServer: Complete!
+    centralServer: Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
+    centralServer: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/5)
+    centralServer: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/6)
+==> inetRouter2: Importing base box 'almalinux/9'...
+==> inetRouter2: Matching MAC address for NAT networking...
+==> inetRouter2: Checking if box 'almalinux/9' version '1.0.0' is up to date...
+==> inetRouter2: Setting the name of the VM: dz3_inetRouter2_1791477676285_16143
+==> inetRouter2: Fixed port collision for 22 => 2222. Now on port 2202.
+==> inetRouter2: Clearing any previously set network interfaces...
+==> inetRouter2: Preparing network interfaces based on configuration...
+    inetRouter2: Adapter 1: nat
+    inetRouter2: Adapter 2: intnet
+    inetRouter2: Adapter 3: hostonly
+==> inetRouter2: Forwarding ports...
+    inetRouter2: 22 (guest) => 2202 (host) (adapter 1)
+==> inetRouter2: Running 'pre-boot' VM customizations...
+==> inetRouter2: Booting VM...
+==> inetRouter2: Waiting for machine to boot. This may take a few minutes...
+    inetRouter2: SSH address: 127.0.0.1:2202
+    inetRouter2: SSH username: vagrant
+    inetRouter2: SSH auth method: private key
+    inetRouter2:
+    inetRouter2: Vagrant insecure key detected. Vagrant will automatically replace
+    inetRouter2: this with a newly generated keypair for better security.
+    inetRouter2:
+    inetRouter2: Inserting generated public key within guest...
+    inetRouter2: Removing insecure key from the guest if it's present...
+    inetRouter2: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> inetRouter2: Machine booted and ready!
+==> inetRouter2: Checking for guest additions in VM...
+==> inetRouter2: Setting hostname...
+==> inetRouter2: Configuring and enabling network interfaces...
+==> inetRouter2: Mounting shared folders...
+    inetRouter2: D:/linux/Professional/30 Фильтрация трафика - iptables/dz3 => /vagrant
+==> inetRouter2: Running provisioner: shell...
+    inetRouter2: Running: inline script
+    inetRouter2: Failed to stop firewalld.service: Unit firewalld.service not loaded.
+    inetRouter2: Failed to disable unit: Unit file firewalld.service does not exist.
+    inetRouter2: Unit firewalld.service does not exist, proceeding anyway.
+    inetRouter2: Created symlink /etc/systemd/system/firewalld.service → /dev/null.
+    inetRouter2: AlmaLinux 9 - AppStream                         1.7 MB/s |  28 MB     00:16
+    inetRouter2: AlmaLinux 9 - BaseOS                            1.4 MB/s |  45 MB     00:32
+    inetRouter2: AlmaLinux 9 - Extras                             40 kB/s |  33 kB     00:00
+    inetRouter2: Last metadata expiration check: 0:00:01 ago on Thu 08 Oct 2026 04:43:13 PM UTC.
+    inetRouter2: Dependencies resolved.
+    inetRouter2: ================================================================================
+    inetRouter2:  Package                   Arch       Version               Repository     Size
+    inetRouter2: ================================================================================
+    inetRouter2: Installing:
+    inetRouter2:  iptables-nft-services     noarch     1.8.10-11.el9_5       appstream      18 k
+    inetRouter2: Upgrading:
+    inetRouter2:  iptables-libs             x86_64     1.8.10-11.el9_5       baseos        397 k
+    inetRouter2: Installing dependencies:
+    inetRouter2:  iptables-nft              x86_64     1.8.10-11.el9_5       baseos        187 k
+    inetRouter2:  libnftnl                  x86_64     1.2.6-4.el9_4         baseos         87 k
+    inetRouter2:
+    inetRouter2: Transaction Summary
+    inetRouter2: ================================================================================
+    inetRouter2: Install  3 Packages
+    inetRouter2: Upgrade  1 Package
+    inetRouter2:
+    inetRouter2: Total download size: 689 k
+    inetRouter2: Downloading Packages:
+    inetRouter2: (1/4): iptables-nft-services-1.8.10-11.el9_5.no 120 kB/s |  18 kB     00:00
+    inetRouter2: (2/4): libnftnl-1.2.6-4.el9_4.x86_64.rpm        470 kB/s |  87 kB     00:00
+    inetRouter2: (3/4): iptables-nft-1.8.10-11.el9_5.x86_64.rpm  578 kB/s | 187 kB     00:00
+    inetRouter2: (4/4): iptables-libs-1.8.10-11.el9_5.x86_64.rpm 1.2 MB/s | 397 kB     00:00
+    inetRouter2: --------------------------------------------------------------------------------
+    inetRouter2: Total                                           442 kB/s | 689 kB     00:01
+    inetRouter2: Running transaction check
+    inetRouter2: Transaction check succeeded.
+    inetRouter2: Running transaction test
+    inetRouter2: Transaction test succeeded.
+    inetRouter2: Running transaction
+    inetRouter2:   Preparing        :                                                        1/1
+    inetRouter2:   Upgrading        : iptables-libs-1.8.10-11.el9_5.x86_64                   1/5
+    inetRouter2:   Installing       : libnftnl-1.2.6-4.el9_4.x86_64                          2/5
+    inetRouter2:   Installing       : iptables-nft-1.8.10-11.el9_5.x86_64                    3/5
+    inetRouter2:   Running scriptlet: iptables-nft-1.8.10-11.el9_5.x86_64                    3/5
+    inetRouter2:   Installing       : iptables-nft-services-1.8.10-11.el9_5.noarch           4/5
+    inetRouter2:   Running scriptlet: iptables-nft-services-1.8.10-11.el9_5.noarch           4/5
+    inetRouter2:   Cleanup          : iptables-libs-1.8.10-4.el9_4.x86_64                    5/5
+    inetRouter2:   Running scriptlet: iptables-libs-1.8.10-4.el9_4.x86_64                    5/5
+    inetRouter2:   Verifying        : iptables-nft-services-1.8.10-11.el9_5.noarch           1/5
+    inetRouter2:   Verifying        : iptables-nft-1.8.10-11.el9_5.x86_64                    2/5
+    inetRouter2:   Verifying        : libnftnl-1.2.6-4.el9_4.x86_64                          3/5
+    inetRouter2:   Verifying        : iptables-libs-1.8.10-11.el9_5.x86_64                   4/5
+    inetRouter2:   Verifying        : iptables-libs-1.8.10-4.el9_4.x86_64                    5/5
+    inetRouter2:
+    inetRouter2: Upgraded:
+    inetRouter2:   iptables-libs-1.8.10-11.el9_5.x86_64
+    inetRouter2: Installed:
+    inetRouter2:   iptables-nft-1.8.10-11.el9_5.x86_64
+    inetRouter2:   iptables-nft-services-1.8.10-11.el9_5.noarch
+    inetRouter2:   libnftnl-1.2.6-4.el9_4.x86_64
+    inetRouter2:
+    inetRouter2: Complete!
+    inetRouter2: Created symlink /etc/systemd/system/multi-user.target.wants/iptables.service → /usr/lib/systemd/system/iptables.service.
+    inetRouter2: net.ipv4.ip_forward = 1
+    inetRouter2: net.ipv4.ip_forward = 1
+    inetRouter2: # Generated by iptables-save v1.8.10 (nf_tables) on Thu Oct  8 16:43:19 2026
+    inetRouter2: *filter
+    inetRouter2: :INPUT ACCEPT [2:80]
+    inetRouter2: :FORWARD ACCEPT [0:0]
+    inetRouter2: :OUTPUT ACCEPT [2:312]
+    inetRouter2: -A INPUT -i eth0 -p tcp -m tcp --dport 22 -j ACCEPT
+    inetRouter2: -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+    inetRouter2: -A FORWARD -j ACCEPT
+    inetRouter2: -A FORWARD -d 192.168.0.2/32 -p tcp -m tcp --dport 80 -j ACCEPT
+    inetRouter2: COMMIT
+    inetRouter2: # Completed on Thu Oct  8 16:43:19 2026
+    inetRouter2: # Generated by iptables-save v1.8.10 (nf_tables) on Thu Oct  8 16:43:19 2026
+    inetRouter2: *nat
+    inetRouter2: :PREROUTING ACCEPT [0:0]
+    inetRouter2: :INPUT ACCEPT [0:0]
+    inetRouter2: :OUTPUT ACCEPT [0:0]
+    inetRouter2: :POSTROUTING ACCEPT [0:0]
+    inetRouter2: -A PREROUTING -p tcp -m tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
+    inetRouter2: -A POSTROUTING -o eth1 -j MASQUERADE
+    inetRouter2: COMMIT
+    inetRouter2: # Completed on Thu Oct  8 16:43:19 2026
+    inetRouter2: Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/5)
+PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key>
