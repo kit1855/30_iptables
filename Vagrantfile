@@ -320,6 +320,7 @@ EOF
 
         sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 192.168.0.2:80
         sudo iptables -A FORWARD -p tcp -d 192.168.0.2 --dport 80 -j ACCEPT
+        sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
 
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
