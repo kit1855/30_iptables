@@ -323,6 +323,9 @@ EOF
         sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
 
+        sudo nmcli con modify 'eth0' ipv4.never-default yes
+        sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.0.65"
+
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
         sudo nmcli con reload
         sudo nmcli con up 'System eth1'
