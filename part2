@@ -528,36 +528,4 @@ RawContentLength  : 5760
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key>
 
 # проверка пункта 5 "дефолт в инет оставить через inetRouter"
-
-# ВМ инетРоутер имеет дефолтный маршрут через свой НАТ интерфейс, созданный вагрантом
-# по умолчанию для выхода в интернет. Условие выполнено.
-PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh inetRouter
-Last login: Thu Oct  8 16:54:33 2026 from 10.0.2.2
-[vagrant@inetRouter ~]$ ip route | grep default
-default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
-[vagrant@inetRouter ~]$ exit
-
-# ВМ централСервер имеет дефолтный маршрут через сеть дир-нет в ВМ централРоутер.
-# а далее пойдёт на ВМ инетРоутер, но это будет проверяться уже на ВМ централРоутер.
-# тут главное, что маршрут у ВМ централСервер не поменялся в результате внесённых изменений.
-PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh centralServer
-Last login: Thu Oct  8 17:09:08 2026 from 10.0.2.2
-[vagrant@centralServer ~]$ ip route | grep default
-default via 192.168.0.1 dev eth1 proto static metric 104
-[vagrant@centralServer ~]$ exit
-logout
-
-# ВМ централРоутер имеет дефолтный маршрут через ВМ инетРоутер. Так и должно быть.
-# условие выполнено.
-PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh centralRouter
-Last login: Thu Oct  8 16:52:25 2026 from 10.0.2.2
-[vagrant@centralRouter ~]$ ip route | grep default
-default via 192.168.255.1 dev eth1 proto static metric 109
-[vagrant@centralRouter ~]$ exit
-logout
-
-# ВМ инетРоутер2 имеет дефолтный маршрут через ВМ централРоутер.
-PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz3\key> vagrant ssh inetRouter2
-Last login: Thu Oct  8 17:12:14 2026 from 10.0.2.2
-[vagrant@inetRouter2 ~]$ ip route | grep default
-default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
+***
