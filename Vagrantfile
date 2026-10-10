@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
         sudo systemctl mask firewalld
 
         # установка пакетов
-        sudo dnf install -y iptables-services epel-release
+        sudo dnf install -y iptables-services epel-release traceroute
         sudo dnf install -y knock-server
         sudo systemctl enable --now iptables
 
@@ -110,7 +110,7 @@ EOF
       sudo chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
 
       # установка пакетов
-      sudo dnf install -y epel-release
+      sudo dnf install -y epel-release traceroute
       sudo dnf install -y knock
 
       # создание скрипта knok
@@ -154,7 +154,7 @@ EOF
     run: "always",
     inline: <<-SHELL
 
-      sudo dnf install -y nginx
+      sudo dnf install -y nginx traceroute
       sudo systemctl enable --now nginx.service
       sudo nmcli con modify 'eth0' ipv4.never-default yes
       sudo nmcli con reload
@@ -188,6 +188,7 @@ EOF
     office1.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+      sudo dnf install -y traceroute
       sudo nmcli con modify 'eth0' ipv4.never-default yes
       sudo nmcli con reload
       sudo nmcli con up 'eth0'
@@ -215,6 +216,7 @@ EOF
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+      sudo dnf install -y traceroute
       sudo nmcli con modify 'eth0' ipv4.never-default yes
       sudo nmcli con reload
       sudo nmcli con up 'eth0'
@@ -243,6 +245,7 @@ EOF
     office2.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+      sudo dnf install -y traceroute
       sudo nmcli con modify 'eth0' ipv4.never-default yes
       sudo nmcli con reload
       sudo nmcli con up 'eth0'
@@ -270,6 +273,7 @@ EOF
     srv.vm.provision "shell",
     run: "always",
     inline: <<-SHELL
+      sudo dnf install -y traceroute
       sudo nmcli con modify 'eth0' ipv4.never-default yes
       sudo nmcli con reload
       sudo nmcli con up 'eth0'
@@ -303,8 +307,8 @@ EOF
         sudo systemctl disable firewalld
         sudo systemctl mask firewalld
 
-        # установка пакетов
-        sudo dnf install -y iptables-services
+        # установка 
+        sudo dnf install -y iptables-services traceroute
         sudo systemctl enable --now iptables
 
         # сброс старых правил
