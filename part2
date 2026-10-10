@@ -568,7 +568,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 30  * * *
 logout
 
-#выход в интернет происходит через ВМ инетРоутер
+# для ВМ централСервер выход в интернет происходит через ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh centralRouter
 Last login: Sat Oct 10 07:50:27 2026 from 10.0.2.2
 [vagrant@centralRouter ~]$ traceroute 8.8.8.8
@@ -604,7 +604,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 29  * * *
 logout
 
-# выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
+# для ВМ централСервер выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh centralServer
 Last login: Sat Oct 10 07:36:15 2026 from 10.0.2.2
 [vagrant@centralServer ~]$ traceroute 8.8.8.8
@@ -641,7 +641,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 30  * * *
 logout
 
-# выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
+# для ВМ инетРоутер2 выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh inetRouter2
 Last login: Sat Oct 10 07:36:46 2026 from 10.0.2.2
 [vagrant@inetRouter2 ~]$ traceroute 8.8.8.8
@@ -678,7 +678,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 [vagrant@inetRouter2 ~]$ exit
 logout
 
-# выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
+# для ВМ офис1Роутер выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh office1Router
 [vagrant@office1Router ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
@@ -714,7 +714,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 [vagrant@office1Router ~]$ exit
 logout
 
-# выход в интернет происходит через ВМ офис1Роутер, ВМ централСервер и ВМ инетРоутер
+# для ВМ офис1Сервер выход в интернет происходит через ВМ офис1Роутер, ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh office1Server
 [vagrant@office1Server ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
@@ -750,7 +750,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 [vagrant@office1Server ~]$ exit
 logout
 
-# выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
+# для ВМ офис2Роутер выход в интернет происходит через ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh office2Router
 [vagrant@office2Router ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
@@ -787,7 +787,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 [vagrant@office2Router ~]$ exit
 logout
 
-# выход в интернет происходит через ВМ офис2Роутер, ВМ централСервер и ВМ инетРоутер
+# для ВМ офис2Сервер выход в интернет происходит через ВМ офис2Роутер, ВМ централСервер и ВМ инетРоутер
 PS D:\linux\Professional\30 Фильтрация трафика - iptables\dz4> vagrant ssh office2Server
 [vagrant@office2Server ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
