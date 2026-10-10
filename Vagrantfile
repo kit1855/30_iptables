@@ -324,6 +324,7 @@ EOF
         sudo iptables-save | sudo tee /etc/sysconfig/iptables
 
         sudo nmcli con modify 'eth0' ipv4.never-default yes
+        sudo nmcli con up 'eth0'
         sudo nmcli connection modify "System eth1" +ipv4.routes "0.0.0.0/0 192.168.0.65"
 
         sudo nmcli connection modify "System eth1" +ipv4.routes "192.168.0.0/28 192.168.0.65"
